@@ -1,0 +1,9 @@
+---
+ - hosts: local
+   user: root
+   tasks:
+    - name: copy file from server
+      win_copy:
+         src: /etc/ansible/playbook/copy.yml
+         dest: D:\LTA
+
