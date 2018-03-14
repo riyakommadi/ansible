@@ -1,0 +1,25 @@
+---
+- hosts: local
+  user: root
+  tasks:
+#      path: C:\InterSystems 
+#      #      path: D:\ANSIBLE
+#      #      state: directory
+
+    - name: "Copies ENSEMBLE exe installer on client server"
+      win_copy: 
+        src: /home/Softwares/ensemble-2015.1.2.607.2-win_x64.exe 
+        dest: D:\ANSIBLE
+
+    - name: "Checks whether file has been copied successfully on the clien server"
+      win_stat:
+        path: D:\ANSIBLE\ensemble-2015.1.2.607.2-win_x64.exe
+        get_checksum: yes
+        checksum_algorithm: md5
+        register: md5_checksum
+    - debug:
+       var: md5_checksum.stat.checksum
+
+    - name: "Installs ENSEMBLE on the client server"
+      win_command: D:\ANSIBLE\ensemble-2015.1.2.607.2-win_x64.exe /S /C=C:\InterSystems\EnsembleNEW
+
