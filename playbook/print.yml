@@ -1,0 +1,6 @@
+- hosts: local
+  tasks: 
+   - name: print sample massege
+
+     debug: 
+      msg: "hello world"
