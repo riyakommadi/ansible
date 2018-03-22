@@ -1,0 +1,381 @@
+how to genarate log file from svn 
+
+svn log -v -r {2016-01-01}:{2016-05-04} svn://uk-nott-pdc.div3.nuk.local/SOAPS2_0/branches/Athena_FEP_Feature_release > report.txt
+
+
+OR
+
+svn log -v -r {2016-01-01}:{2016-05-04} svn://uk-nott-pdc.div3.nuk.local/SOAPS2_0/branches/Athena_FEP_Feature_release > report.txt
+
+
+----->svnadmin dump http://projectname.googlecode.com/svn > repodump
+
+       svnadmin: 'http://projectname.googlecode.com/svn' is an URL when it should be a path
+
+------> create local repository
+
+------->svnadmin create c:/repository
+
+------>Add a “pre-revprop-change” hook to the local repository.
+
+------>echo > c:\repository\hooks\pre-revprop-change.cmd
+
+4------>Synchronize your new repository with the remote one:
+
+-------->svnsync init file:///c:/repository https://example.googlecode.com/svn
+
+--------->svnsync sync file:///c:/repository
+
+5------->Finally, once the synchronization is done, simply dump your local repository:
+
+------->svnadmin dump c:/repository > repodump
+
+----->  svn import d:/best http://loaclhost/svn -m"iniati"
+
+
+this import command will perform copy the content of best into repository
+
+
+_________________________________________________________________________________________________________________
+
+
+1..svn help
+
+2.. svn help checkout
+
+3.. svnadmin help
+
+4..svnadmin create d:/amp/repo_test
+
+5..svn import d:/amp/repo_test file:///d:/repo -m"initail import"
+
+6.. svn list file:///d:/repo
+
+7..svnlook tree repo  ( difference between svn list and svnlook tree is one excepts url another not
+
+
+8..svn co file:///d:/repo/to_do
+
+9.. specific directory in svn for check out
+
+10.. svn co file:///d:/repo/trunk/nn
+
+11.. single file can not check out , but we can extract them from repo by svn export
+
+12..svn export file:///d:/repo/trunk/nn,abc.txt
+
+13..to track the changes before commit use status
+
+14.. svn status
+
+15..svn diff color.txt
+
+16.. svn commit -m" ffs"
+
+17..svn add color.txt
+
+18.. svn log
+
+19.. svn log --limit 3
+
+20..see svn log for specfic revision
+
+21...svn log -r 3
+
+22.. update the working copy into the latest revision
+
+23.. svn update
+
+24.. udate to specifc revision
+
+25.. svn update -r 3
+
+26...svn move dir_name dist_dir_name
+
+examples:   svn move foo bar
+ 		
+		after this command need to put commit message
+		
+		svn commit --message "Moved foo to bar because 
+
+27.....$ svn move -m "Move a file" http://svn.red-bean.com/repos/foo.c http://svn.red-bean.com/repos/bar.c
+
+___________________________
+
+
+right click in Windows explorer on a folder, then 'Tortoise SVN', then 'Repo-browser'.
+in repo browser, make your you are looking at where-the-folder-you-want-to-move-is.
+click on the folder (or file!) to move and drag it on the left pane where you want it to be
+click OK to close the repo browser
+right-click in your folder and 'Update'.
+When you update, Tortoise SVN will delete the folder where it was and re-create it where you moved it.
+
+
+
+
+
+
+____________________________________________________________________________________________________________
+
+create repository structure
+
+____________________________________________
+
+1... svnadmin create /data/subversion
+
+2... import to local repository
+
+3... svn import findus4 file:///data/subversion/findus4
+
+4....import webdav repository
+
+5... svn import findus4 http://svn.rosi13/svn/findus4
+
+
+
+6... creating trunk-directory ,initial import , check out
+
+
+7.... svn mkdir http://svn.rosi13/svn/findus4/trunk
+
+8... cd findus4
+
+9....svn import -m "initial import" http://svn.rosi13/svn/findus4/trunk
+
+10... mv findus4 findus4.old
+11... mkdir findus4
+
+12... svn co http://svn.rosi13/svn/findus4/trunk findus4
+
+13... rm rf findus4.old
+
+
+	heckout 
+	Checkout, getting out files from repository
+
+	svn checkout file:///data/subversion/findus4
+	svn checkout http://subversion.rosi13.de/subversion/test
+	Checkout behind the proxy-server 
+	Checkout, getting out files from repository when you are *behind a proxy-server*
+
+	So, you are behind a proxyserver and want to access the repository through this proxyserver.
+
+	Configure svn to use a proxy in the file ~/.subversion/servers which then should look like this:
+
+	[global]
+	http-proxy-host = 127.0.0.1
+
+	http-proxy-port = 3128
+
+	http-proxy-compression = no
+
+	Configure your Squidserver to allow some commands with this line in /etc/squid.conf:
+
+
+	extension_methods REPORT MERGE MKACTIVITY CHECKOUT
+	Do you initial checkout:
+
+	svn checkout http://subversion.rosi13.de/subversion/test test
+
+	svn commit 
+	
+	Putting changed file to repository
+
+You don't need the place of the repository anymore, svn remembers it.
+
+	svn commit
+	svn status 
+	Which files have changed? Are there new files?
+
+	svn status
+	svn diff 
+	What has changed?
+
+	svn diff
+	svn add 
+	New file in tree
+
+
+	svn add MyNewFile.pm (schedules file to next update)
+	svn commit (puts diffs and this new file to repos)
+	svn:ignore 
+	Ignore files in a directory
+
+	Before this do an 'svn commit'
+Do
+
+	svn propedit svn:ignore .
+	Every file to be ignored in a new line
+Do
+
+	svn commit -m "ignoring this and that"
+	split repository 
+	Moving projects from a common used repository to several single repositories
+
+	Dump complete subversion-repository to a file:
+
+	$ svnadmin dump /data/subversion >complete.svn.dump
+	
+	Create an extract from your first project:
+
+	$ cat complete.svn.dump | svndumpfilter \
+--drop-empty-revs \
+--renumber-revs \
+	
+	include project007 \
+	
+	>project007.svn.dump
+
+
+Create new repository:
+
+$ svnadmin create /data/subversion/project007
+	
+	Import complete history to new repository
+
+$svnadmin load /data/subversion/project007 <project007.svn.dump
+
+	svn:keywords 
+
+	Activate creating keywords
+
+svn propset svn:keywords "Revision Date Id HeadURL Author" myfile.pm
+
+	Sending Mails when commiting files 
+	Install these package in debian-linux on your subversion-server: libsvn-notify-perl - Subversion activity notification.
+
+% apt-get install libsvn-notify-perl
+Check:
+
+% svnnotify
+Missing required "--repos-path" parameter
+If you get this error-message then you are ready to run this script when commiting code. To do this write a command into the shell-script post-commit, which is already there in your repository-directory:
+
+cd /data/svn/findus/hooks/
+ls -l
+cat > post-commit
+#!/bin/sh
+svnnotify --repos-path "$1" --revision "$2" \
+     --to one@dontcare.com,two@dontcare.com \
+     --reply-to responsible-for-everything@somewhere.com \
+     --language de
+You get a mail like this after commit code:
+
+ Revision: 329
+ Author:   horshack
+ Date:     2006-01-31 22:27:05 +0100 (Tue, 31 Jan 2006)
+
+ Log Message:
+ -----------
+ this is the commit-message bla bla
+
+ Modified Paths:
+ --------------
+     trunk/findus_mini.ini
+Restrict ssh-login to subversion only 
+Your ~/.ssh/authorized_keys file has to look like this (everything must be in a single line):
+
+command="/usr/bin/svnserve --tunnel --root=/var/svn",no-port-forwarding,no-agent-forwarding,no-X11-forwarding,no-pty ssh-dss AAAAB3N...
+This makes that whatever program the user tries to run via ssh, he will always run
+
+/usr/bin/svnserver --tunnel...
+The user can only access svn-repositories in /var/svn.
+
+When you have a repository /data/svn/findus/trunk he has to do this:
+
+svn checkout svn+ssh://username@svn.juhei.org/data/svn/findus/trunk findus
+Books 
+Subversion by O'Reilly
+http://svnbook.red-bean.com/
+it's a free book
+
+
+_____________________________________________------------------------------------------------------------
+________________________________________________--------------------------------------------------------
+
+if you want to create any command first we need to go for working copy inthat open command prompt
+ given for create dump file use
+
+	svnadmin dump c:\svn_repositorires\svn_repo > adjrep.dmp
+
+ for load dump file into repository..
+
+	svnadmin load c:\svn_repositorires\svn_repo < adjrep.dmp
+
+
+some example for adding unversioned file/directories to svn repository
+
+	svn add --force * --auto-props --parents --depth infinity -q
+		
+		after this we need to do commit
+	svn commit -m" adding a file"
+	
+			(or)
+
+	
+Since this post is tagged Windows, I thought I would work out a solution for Windows. I wanted to automate the process, and I made a bat file. I resisted making a console.exe in C#.
+
+I wanted to add any files or folders which are not added in my repository when I begin the commit process.
+
+The problem with many of the answers is they will list unversioned files which should be ignored as per my ignore list in TortoiseSVN.
+
+Here is my hook setting and batch file which does that
+
+Tortoise Hook Script:
+
+"start_commit_hook".
+(where I checkout) working copy path = C:\Projects
+command line: C:\windows\system32\cmd.exe /c C:\Tools\SVN\svnadd.bat
+(X) Wait for the script to finish
+(X) (Optional) Hide script while running
+(X) Always execute the script
+svnadd.bat
+
+@echo off
+
+rem Iterates each line result from the command which lists files/folders
+rem     not added to source control while respecting the ignore list.
+FOR /F "delims==" %%G IN ('svn status ^| findstr "^?"') DO call :DoSVNAdd "%%G"
+goto end
+
+:DoSVNAdd
+set addPath=%1
+rem Remove line prefix formatting from svn status command output as well as
+rem    quotes from the G call (as required for long folder names). Then
+rem    place quotes back around the path for the SVN add call.
+set addPath="%addPath:~9,-1%"
+svn add %addPath%
+
+:end
+
+______________________------------
+
+  svn --force --depth infinity add .
+
+  be careful though ,bcz this will also add nay svn:ignored files
+
+2 	svn --force add dir/*/*/*
+	* is level of the that i  want to add
+
+	check the result with svn status --no-ignore
+On local : 
+cd \GemCSAdmin\appContent\GemCSAdmin>
+ant clearLdapDataAndRefreshStructure -DldapFilePath=../../../GemSecurity/resources/ldap/ -DldapServerLocation=10.102.84.191 -DldapServerUsername=root -DldapServerPassword=Password01 -DldapServerAdminAccountName="cn=Directory Manager" -DldapServerAdminAccountPassword=DirectoryManager -DldapServerInstanceName=ATH-AT-LDA-01
+
+
+
+		
+		
+				ant loadJuddiServices -DjuddiLocation="http://10.102.84.200:9081/juddiv3/services/" -DservicesConfigPath="D:\CSRelease\CS\25853\ConfigTemplates\configTemplate\output\juddi\juddi-service.config
+				
+				
+				ant loadJuddiServices -DjuddiLocation="http://10.102.94.29:9081/juddiv3/services/" -DservicesConfigPath=".\juddiTmpDir\juddi-service.config"
+
+
+
+
+
+
+
+
+http://10.102.84.24:8080/job/Gem%20CS%20-%20Deploy%20Latest%20to%20CS%20Dev/5555/console present sir
