@@ -1,0 +1,31 @@
+---
+
+ - hosts: 192.168.4.183
+   user: root
+   tasks: 
+
+    - name: "Copies couchbase exe installer on client server"
+      win_copy:
+        src: /home/Softwares/couchbase-server-enterprise_4.1.0-windows_amd64.exe
+        dest: D:\LTA
+
+    - name: "Checks whether file has been copied successfully on the clien server"
+
+      win_stat: 
+
+        path: D:\LTA\couchbase-server-enterprise_4.1.0-windows_amd64.exe
+        get_checksum: yes
+        checksum_algorithm: md5
+        register: md5_checksum
+    - debug:
+        var: md5_checksum.stat.checksum
+    - name: "Installs couchbase on the client server"
+
+      win_command: D:\LTA\couchbase-server-enterprise_4.1.0-windows_amd64.exe /Q/log C:\temp\setup.log
+
+    - name: "setup couchabse as a win service"
+      win_service:
+
+        name: couchbase
+        start_mode: atuo
+        state: started
